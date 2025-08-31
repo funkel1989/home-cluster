@@ -4,6 +4,8 @@ apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
   name: grafana
+  annotations:
+    external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
 spec:
   hostnames: ["grafana.${SECRET_DOMAIN}"]
   parentRefs:
@@ -18,4 +20,3 @@ spec:
       backendRefs:
         - name: grafana
           port: 80
-

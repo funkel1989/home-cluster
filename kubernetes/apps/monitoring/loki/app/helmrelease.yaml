@@ -36,7 +36,17 @@ spec:
         replication_factor: 1
       storage:
         type: filesystem
-      useTestSchema: true
+      # Provide explicit schema_config without RFC3339 timestamps
+      structuredConfig:
+        schema_config:
+          configs:
+            - from: "2024-04-01"
+              store: boltdb-shipper
+              object_store: filesystem
+              schema: v13
+              index:
+                prefix: index_
+                period: 24h
       limits_config:
         retention_period: 720h
     singleBinary:
