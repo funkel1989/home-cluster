@@ -36,6 +36,12 @@ spec:
       valuesKey: values.yaml
   values:
     assertNoLeakedSecrets: false
+    sidecar:
+      dashboards:
+        enabled: true
+        searchNamespace: ALL
+        folder: /var/lib/grafana/dashboards
+        defaultFolderName: default
     service:
       type: ClusterIP
       port: 80
