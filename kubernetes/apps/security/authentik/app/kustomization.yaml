@@ -7,4 +7,4 @@ resources:
   - ./helmrelease.yaml
   - ./httproute.yaml
   - ./secret.sops.yaml
-
+  - ./bootstrap-secret.sops.yaml
