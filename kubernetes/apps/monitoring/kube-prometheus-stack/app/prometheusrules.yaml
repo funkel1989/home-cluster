@@ -1,0 +1,27 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: blackbox-probe-alerts
+  labels:
+    release: kube-prometheus-stack
+spec:
+  groups:
+    - name: blackbox.probes
+      rules:
+        - alert: BlackboxProbeFailureGrafana
+          expr: probe_success{job="blackbox-grafana"} == 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Grafana probe is failing"
+            description: "Blackbox HTTP probe to Grafana returned non-2xx for 5m."
+        - alert: BlackboxProbeFailureAuthentik
+          expr: probe_success{job="blackbox-authentik"} == 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Authentik probe is failing"
+            description: "Blackbox HTTP probe to Authentik returned non-2xx for 5m."
