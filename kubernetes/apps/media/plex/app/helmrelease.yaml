@@ -1,0 +1,130 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: plex
+spec:
+  suspend: true # flip to false after creating the rclone config secret
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      strategy: rollback
+      retries: 3
+  values:
+    controllers:
+      plex:
+        strategy: RollingUpdate
+        pod:
+          annotations:
+            reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: plexinc/pms-docker
+              tag: 1.41.4.9463-630c9f557 # example, adjust as desired
+            env:
+              TZ: "UTC"
+              # Set if you want to auto-claim the server on first run
+              # PLEX_CLAIM: "claim-xxxxxxxxxxxxxxxxxxxx"
+            resources:
+              requests:
+                cpu: 200m
+                memory: 512Mi
+              limits:
+                memory: 2Gi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
+              capabilities: { drop: ["ALL"] }
+            probes:
+              liveness:
+                enabled: true
+              readiness:
+                enabled: true
+            # Mount config and media
+            volumeMounts:
+              - name: config
+                mountPath: /config
+              - name: media
+                mountPath: /data/media
+                readOnly: true
+
+          rclone:
+            image:
+              repository: rclone/rclone
+              tag: 1.67.0
+            args:
+              - mount
+              - gdrive:           # remote name in rclone.conf
+              - /mnt/media
+              - --config=/config/rclone/rclone.conf
+              - --umask=002
+              - --dir-cache-time=1h
+              - --poll-interval=1m
+              - --allow-other
+              - --vfs-cache-mode=full
+              - --vfs-read-ahead=64M
+              - --buffer-size=32M
+            securityContext:
+              privileged: true      # required for FUSE
+            resources:
+              requests:
+                cpu: 50m
+                memory: 128Mi
+              limits:
+                memory: 512Mi
+            volumeMounts:
+              - name: media
+                mountPath: /mnt/media
+              - name: rclone-config
+                mountPath: /config/rclone
+                readOnly: true
+
+    persistence:
+      # Plex config on Longhorn (RWO)
+      config:
+        enabled: true
+        type: persistentVolumeClaim
+        storageClass: longhorn
+        accessMode: ReadWriteOnce
+        size: 20Gi
+        retain: true
+        globalMounts:
+          - path: /config
+
+      # Shared emptyDir for rclone mount -> Plex media
+      media:
+        enabled: true
+        type: emptyDir
+        globalMounts:
+          - path: /data/media
+            readOnly: true
+
+      # Secret with rclone.conf providing a remote named `gdrive`
+      rclone-config:
+        enabled: true
+        type: secret
+        name: rclone-config
+        defaultMode: 0400
+        advancedMounts:
+          plex:
+            rclone:
+              - path: /config/rclone
+                readOnly: true
+
+    service:
+      app:
+        controller: plex
+        ports:
+          http:
+            port: 32400
+
+    # HTTPRoute is defined separately in app/httproute.yaml
