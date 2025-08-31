@@ -1,0 +1,28 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: authentik-dump-users
+spec:
+  ttlSecondsAfterFinished: 120
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: dump
+          image: ghcr.io/goauthentik/server:2025.8.1
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/bash","-lc"]
+          args:
+            - |
+              set -euo pipefail
+              source /ak-root/.venv/bin/activate
+              python -m manage shell <<'PY'
+              from authentik.core.models import User
+              for u in User.objects.all():
+                  print(u.username, u.email, [g.name for g in u.groups.all()])
+              PY
+          envFrom:
+            - secretRef:
+                name: authentik
