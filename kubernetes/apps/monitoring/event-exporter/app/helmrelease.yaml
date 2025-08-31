@@ -1,0 +1,55 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: bitnami
+spec:
+  interval: 1h
+  url: https://charts.bitnami.com/bitnami
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kubernetes-event-exporter
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: kubernetes-event-exporter
+      version: 3.6.3
+      sourceRef:
+        kind: HelmRepository
+        name: bitnami
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+      strategy: rollback
+  values:
+    config:
+      logLevel: info
+      logFormat: json
+      clusterName: ${SECRET_DOMAIN}
+      receivers:
+        - name: loki
+          loki:
+            url: http://loki.monitoring.svc.cluster.local:3100/loki/api/v1/push
+            labels:
+              job: kubernetes-event-exporter
+              cluster: ${SECRET_DOMAIN}
+        - name: dump
+          file:
+            path: /dev/stdout
+      route:
+        routes:
+          - match:
+              - receiver: loki
+            dropReason: false
+            dropNamespace: false
+          - match:
+              - receiver: dump
+    metrics:
+      enabled: false

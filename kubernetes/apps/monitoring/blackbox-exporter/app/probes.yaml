@@ -1,0 +1,33 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: Probe
+metadata:
+  name: probe-grafana
+  labels:
+    app.kubernetes.io/name: blackbox-probe
+spec:
+  jobName: blackbox-grafana
+  prober:
+    url: http://prometheus-blackbox-exporter.monitoring.svc.cluster.local:9115
+  module: http_2xx
+  targets:
+    staticConfig:
+      static:
+        - https://grafana.${SECRET_DOMAIN}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: Probe
+metadata:
+  name: probe-authentik
+  labels:
+    app.kubernetes.io/name: blackbox-probe
+spec:
+  jobName: blackbox-authentik
+  prober:
+    url: http://prometheus-blackbox-exporter.monitoring.svc.cluster.local:9115
+  module: http_2xx
+  targets:
+    staticConfig:
+      static:
+        - https://auth.${SECRET_DOMAIN}
+

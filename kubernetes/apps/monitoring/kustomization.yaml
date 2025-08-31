@@ -12,4 +12,4 @@ resources:
   - ./promtail/ks.yaml
   - ./tempo/ks.yaml
   - ./blackbox-exporter/ks.yaml
-
+  - ./event-exporter/ks.yaml
