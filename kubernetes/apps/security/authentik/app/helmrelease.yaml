@@ -35,6 +35,19 @@ spec:
       name: authentik-values
       valuesKey: values.yaml
   values:
+    # Ensure domain-substituted email addresses are set via spec.values (postBuild substitution works here)
+    authentik:
+      email:
+        from: "auth@${SECRET_DOMAIN}"
+    global:
+      env:
+        - name: AUTHENTIK_BOOTSTRAP_EMAIL
+          value: "admin@${SECRET_DOMAIN}"
+        - name: AUTHENTIK_BOOTSTRAP_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: authentik-bootstrap
+              key: AUTHENTIK_BOOTSTRAP_PASSWORD
     # Enable built-in dependencies and persistence
     postgresql:
       enabled: true
@@ -53,4 +66,3 @@ spec:
         type: ClusterIP
         servicePortHttp: 80
     # Bootstrap/admin and DB credentials, secret key are provided via valuesFrom secret
-
