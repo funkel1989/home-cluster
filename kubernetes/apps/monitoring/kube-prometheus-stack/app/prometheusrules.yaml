@@ -25,3 +25,89 @@ spec:
           annotations:
             summary: "Authentik probe is failing"
             description: "Blackbox HTTP probe to Authentik returned non-2xx for 5m."
+    - name: blackbox.slo
+      rules:
+        - alert: BlackboxSLOFastBurnGrafana
+          expr: (1 - avg_over_time(probe_success{job="blackbox-grafana"}[5m])) > (1 - 0.999) * 14.4
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Grafana availability fast-burn SLO breached"
+            description: "Fast burn rate for Grafana probe exceeds 14.4x error budget (approx 99.9% SLO)."
+        - alert: BlackboxSLOSlowBurnGrafana
+          expr: (1 - avg_over_time(probe_success{job="blackbox-grafana"}[30m])) > (1 - 0.999) * 6
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Grafana availability slow-burn SLO breached"
+            description: "Slow burn rate for Grafana probe exceeds 6x error budget (approx 99.9% SLO)."
+        - alert: BlackboxSLOFastBurnAuthentik
+          expr: (1 - avg_over_time(probe_success{job="blackbox-authentik"}[5m])) > (1 - 0.999) * 14.4
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Authentik availability fast-burn SLO breached"
+            description: "Fast burn rate for Authentik probe exceeds 14.4x error budget (approx 99.9% SLO)."
+        - alert: BlackboxSLOSlowBurnAuthentik
+          expr: (1 - avg_over_time(probe_success{job="blackbox-authentik"}[30m])) > (1 - 0.999) * 6
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Authentik availability slow-burn SLO breached"
+            description: "Slow burn rate for Authentik probe exceeds 6x error budget (approx 99.9% SLO)."
+    - name: apps.general
+      rules:
+        - alert: DeploymentReplicasMismatch
+          expr: (kube_deployment_spec_replicas - kube_deployment_status_replicas_available) > 0
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Deployment has unavailable replicas"
+            description: "{{ $labels.namespace }}/{{ $labels.deployment }} has unavailable replicas for 10m."
+        - alert: StatefulSetReplicasMismatch
+          expr: kube_statefulset_status_replicas_ready < kube_statefulset_status_replicas
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "StatefulSet replicas not ready"
+            description: "{{ $labels.namespace }}/{{ $labels.statefulset }} has not all replicas ready for 10m."
+        - alert: PodRestartRateHigh
+          expr: sum by (namespace,pod) (increase(kube_pod_container_status_restarts_total[5m])) > 5
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Pod restart rate high"
+            description: "{{ $labels.namespace }}/{{ $labels.pod }} restarted more than 5 times in 5m."
+        - alert: ContainerTerminatedRecently
+          expr: sum by (namespace,pod,container) (increase(kube_pod_container_status_terminated_reason{reason!="Completed"}[10m])) > 0
+          for: 0m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Container terminated"
+            description: "{{ $labels.namespace }}/{{ $labels.pod }} container {{ $labels.container }} terminated recently (reason != Completed)."
+    - name: longhorn.alerts
+      rules:
+        - alert: LonghornVolumeFaulted
+          expr: sum by (volume) (longhorn_volume_robustness{robustness="faulted"}) > 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Longhorn volume faulted"
+            description: "Volume {{ $labels.volume }} is faulted for more than 5m."
+        - alert: LonghornVolumeDegraded
+          expr: sum by (volume) (longhorn_volume_robustness{robustness="degraded"}) > 0
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Longhorn volume degraded"
+            description: "Volume {{ $labels.volume }} is degraded for more than 10m."
