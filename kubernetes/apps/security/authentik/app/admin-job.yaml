@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: authentik-promote-admin-v2
+  name: authentik-promote-admin-v3
 spec:
   ttlSecondsAfterFinished: 120
   backoffLimit: 0
@@ -19,7 +19,16 @@ spec:
               set -euo pipefail
               source /ak-root/.venv/bin/activate
               cd /
-              python -m manage shell -c "from authentik.core.models import User; print('pre', list(User.objects.values_list('username','is_superuser','is_staff'))); User.objects.filter(username__in=['admin','akadmin']).update(is_superuser=True,is_staff=True); print('post', list(User.objects.values_list('username','is_superuser','is_staff')))"
+              python -m manage create_admin_group || true
+              python -m manage shell - <<'PY'
+              from authentik.core.models import User, Group
+              g = Group.objects.get_or_create(name='authentik Admins')[0]
+              targets = list(User.objects.filter(username__in=['admin','akadmin']))
+              for u in targets:
+                  u.groups.add(g)
+                  u.save()
+              print('added to admins:', [u.username for u in targets])
+              PY
           envFrom:
             - secretRef:
                 name: authentik
