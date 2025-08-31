@@ -111,3 +111,23 @@ spec:
           annotations:
             summary: "Longhorn volume degraded"
             description: "Volume {{ $labels.volume }} is degraded for more than 10m."
+    - name: apps.storage
+      rules:
+        - alert: PVCUsageHigh
+          expr: |
+            (1 - (kubelet_volume_stats_available_bytes / kubelet_volume_stats_capacity_bytes)) > 0.90
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "PVC usage high (>90%)"
+            description: "PVC {{ $labels.persistentvolumeclaim }} in {{ $labels.namespace }} is above 90% usage for 15m."
+        - alert: PVCInodesLow
+          expr: |
+            (kubelet_volume_stats_inodes_free / kubelet_volume_stats_inodes) < 0.10
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "PVC inodes low (<10% free)"
+            description: "PVC {{ $labels.persistentvolumeclaim }} in {{ $labels.namespace }} has less than 10% inodes free for 15m."
