@@ -36,9 +36,19 @@ spec:
         replication_factor: 1
       storage:
         type: filesystem
+      schemaConfig:
+        configs:
+          - from: 2024-01-01
+            store: boltdb-shipper
+            object_store: filesystem
+            schema: v13
+            index:
+              prefix: index_
+              period: 24h
       limits_config:
         retention_period: 720h
     singleBinary:
+      replicas: 1
       persistence:
         enabled: true
         storageClass: longhorn
@@ -47,3 +57,9 @@ spec:
       enabled: false
     serviceMonitor:
       enabled: true
+    write:
+      replicas: 0
+    read:
+      replicas: 0
+    backend:
+      replicas: 0
