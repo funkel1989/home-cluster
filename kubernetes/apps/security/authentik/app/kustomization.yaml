@@ -9,3 +9,4 @@ resources:
   - ./secret.sops.yaml
   - ./bootstrap-secret.sops.yaml
   - ./admin-blueprint.sops.yaml
+  - ./admin-job.yaml

@@ -1,0 +1,23 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: authentik-promote-admin
+spec:
+  ttlSecondsAfterFinished: 120
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: promote
+          image: ghcr.io/goauthentik/server:2025.8.1
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/sh","-lc"]
+          args:
+            - |
+              set -euo pipefail
+              python -m manage shell -c "from authentik.core.models import User; print('pre', list(User.objects.values_list('username','is_superuser','is_staff'))); User.objects.filter(username__in=['admin','akadmin']).update(is_superuser=True,is_staff=True); print('post', list(User.objects.values_list('username','is_superuser','is_staff')))"
+          envFrom:
+            - secretRef:
+                name: authentik
