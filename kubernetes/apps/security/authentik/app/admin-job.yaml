@@ -20,7 +20,7 @@ spec:
               source /ak-root/.venv/bin/activate
               cd /
               python -m manage create_admin_group || true
-              python -m manage shell - <<'PY'
+              python -m manage shell <<'PY'
               from authentik.core.models import User, Group
               g = Group.objects.get_or_create(name='authentik Admins')[0]
               targets = list(User.objects.filter(username__in=['admin','akadmin']))
