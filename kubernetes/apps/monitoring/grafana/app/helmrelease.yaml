@@ -38,6 +38,7 @@ spec:
     service:
       type: ClusterIP
       port: 80
+    envFromSecret: grafana-env
     persistence:
       enabled: true
       type: pvc
@@ -47,4 +48,3 @@ spec:
       requests:
         cpu: 50m
         memory: 256Mi
-

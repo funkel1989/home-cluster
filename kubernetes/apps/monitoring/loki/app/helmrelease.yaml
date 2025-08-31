@@ -36,18 +36,6 @@ spec:
         replication_factor: 1
       storage:
         type: filesystem
-      schemaConfig:
-        configs:
-          - from: 2024-01-01
-            store: boltdb-shipper
-            object_store: filesystem
-            schema: v13
-            index:
-              prefix: index_
-              period: 24h
-      tableManager:
-        retention_deletes_enabled: true
-        retention_period: 720h
       limits_config:
         retention_period: 720h
     singleBinary:
@@ -57,4 +45,3 @@ spec:
         size: 50Gi
     serviceMonitor:
       enabled: true
-
