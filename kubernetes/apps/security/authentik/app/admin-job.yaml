@@ -17,6 +17,8 @@ spec:
           args:
             - |
               set -euo pipefail
+              source /ak-root/.venv/bin/activate
+              cd /
               python -m manage shell -c "from authentik.core.models import User; print('pre', list(User.objects.values_list('username','is_superuser','is_staff'))); User.objects.filter(username__in=['admin','akadmin']).update(is_superuser=True,is_staff=True); print('post', list(User.objects.values_list('username','is_superuser','is_staff')))"
           envFrom:
             - secretRef:
