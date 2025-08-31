@@ -43,5 +43,7 @@ spec:
         enabled: true
         storageClass: longhorn
         size: 50Gi
+    gateway:
+      enabled: false
     serviceMonitor:
       enabled: true
