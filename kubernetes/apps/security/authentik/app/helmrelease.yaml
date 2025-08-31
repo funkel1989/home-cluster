@@ -65,7 +65,4 @@ spec:
       service:
         type: ClusterIP
         servicePortHttp: 80
-    blueprints:
-      secrets:
-        - authentik-admin-blueprint
     # Bootstrap/admin and DB credentials, secret key are provided via valuesFrom secret
