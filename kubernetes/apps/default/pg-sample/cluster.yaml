@@ -1,0 +1,35 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: pg-sample
+  namespace: default
+spec:
+  instances: 1
+  imageName: ghcr.io/cloudnative-pg/postgresql:16
+  storage:
+    size: 10Gi
+    storageClass: longhorn
+  bootstrap:
+    initdb:
+      database: appdb
+      owner: appuser
+      secret:
+        name: pg-sample-owner
+  monitoring:
+    enablePodMonitor: true
+  backup:
+    barmanObjectStore:
+      destinationPath: s3://cnpg-backups/pg-sample
+      s3Credentials:
+        accessKeyId:
+          name: cnpg-backup
+          key: AWS_ACCESS_KEY_ID
+        secretAccessKey:
+          name: cnpg-backup
+          key: AWS_SECRET_ACCESS_KEY
+        endpointURL:
+          name: cnpg-backup
+          key: AWS_ENDPOINT
+    retentionPolicy: "7d"
+
