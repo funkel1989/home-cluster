@@ -54,7 +54,7 @@ function Set-Setting {
     param([string] $Key, [string] $Value)
     Write-Host "Setting '$Key' => '$Value'" -ForegroundColor Yellow
     $resp = Invoke-CfApi -Method PATCH -Path "/zones/$zoneId/settings/$Key" -Body @{ value = $Value }
-    if (-not $resp.success) { throw "Failed to set $Key: $($resp | ConvertTo-Json -Depth 6)" }
+    if (-not $resp.success) { throw "Failed to set ${Key}: $($resp | ConvertTo-Json -Depth 6)" }
 }
 
 if ($DisableRocketLoader) { Set-Setting -Key 'rocket_loader' -Value 'off' }
@@ -75,4 +75,3 @@ if ($PurgeHostnameCache) {
 }
 
 Write-Host "All requested settings applied." -ForegroundColor Green
-
