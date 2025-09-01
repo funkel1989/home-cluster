@@ -3,10 +3,10 @@ originRequest:
   originServerName: "external.${SECRET_DOMAIN}"
 
 ingress:
-  # Route Plex directly to the Plex service to avoid double TLS/proxy issues
-  - hostname: "plex.${SECRET_DOMAIN}"
-    service: http://plex.media.svc.cluster.local:32400
-  # Fallback to external gateway for other hosts
+  # Route ALL hosts (including plex) via the external gateway so
+  # HTTPRoute filters can inject X-Forwarded-* headers Plex expects.
+  # This avoids the "Plex page never loads" issue seen when bypassing
+  # the Gateway and going directly to the Service.
   - hostname: "${SECRET_DOMAIN}"
     service: &svc https://cilium-gateway-external.kube-system.svc.cluster.local
   - hostname: "*.${SECRET_DOMAIN}"
