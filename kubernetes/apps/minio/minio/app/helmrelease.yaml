@@ -27,7 +27,7 @@ spec:
           app:
             image:
               repository: docker.io/minio/minio
-              tag: RELEASE.2024-09-22T00-00-00Z
+              tag: latest
             command: ["/bin/sh","-c"]
             args:
               - |
