@@ -13,7 +13,15 @@ spec:
       namespace: kube-system
       sectionName: https
   rules:
-    - backendRefs:
+    - filters:
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            set:
+              - name: X-Forwarded-Proto
+                value: https
+              - name: X-Forwarded-Port
+                value: "443"
+      backendRefs:
         - name: plex
           port: 32400
 
@@ -32,6 +40,14 @@ spec:
       namespace: kube-system
       sectionName: https
   rules:
-    - backendRefs:
+    - filters:
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            set:
+              - name: X-Forwarded-Proto
+                value: https
+              - name: X-Forwarded-Port
+                value: "443"
+      backendRefs:
         - name: plex
           port: 32400
