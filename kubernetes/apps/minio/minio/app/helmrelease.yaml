@@ -55,23 +55,9 @@ spec:
                 memory: 1Gi
             probes:
               liveness:
-                enabled: true
-                custom: true
-                spec:
-                  httpGet:
-                    path: /minio/health/live
-                    port: 9000
-                  periodSeconds: 10
-                  timeoutSeconds: 2
+                enabled: false
               readiness:
-                enabled: true
-                custom: true
-                spec:
-                  httpGet:
-                    path: /minio/health/ready
-                    port: 9000
-                  periodSeconds: 10
-                  timeoutSeconds: 2
+                enabled: false
 
     service:
       app:
