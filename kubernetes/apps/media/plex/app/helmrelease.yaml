@@ -21,7 +21,7 @@ spec:
   values:
     controllers:
       plex:
-        strategy: RollingUpdate
+        strategy: Recreate
         pod:
           annotations:
             reloader.stakater.com/auto: "true"
