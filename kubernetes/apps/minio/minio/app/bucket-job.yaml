@@ -1,0 +1,29 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: minio-init-bucket
+  labels:
+    app.kubernetes.io/name: minio
+spec:
+  template:
+    metadata:
+      annotations:
+        reloader.stakater.com/auto: "true"
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: mc
+          image: quay.io/minio/mc:latest
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - secretRef:
+                name: minio-root
+          command: ["/bin/sh","-c"]
+          args:
+            - |
+              set -euo pipefail
+              mc alias set minio http://minio.minio.svc.cluster.local:9000 "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD"
+              mc mb --ignore-existing minio/cnpg-backups
+              echo "Bucket 'cnpg-backups' ensured."
+
