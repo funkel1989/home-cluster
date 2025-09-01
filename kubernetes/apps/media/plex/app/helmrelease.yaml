@@ -102,8 +102,10 @@ spec:
             app:
               - path: /data/media
                 readOnly: true
+                mountPropagation: HostToContainer
             rclone:
               - path: /mnt/media
+                mountPropagation: Bidirectional
 
       # Secret with rclone.conf providing a remote named `gdrive`
       rclone-config:
