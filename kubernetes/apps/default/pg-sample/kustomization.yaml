@@ -6,3 +6,5 @@ resources:
   - ./secrets
   - ./cluster.yaml
   - ./scheduledbackup.yaml
+  - ./pooler.yaml
+  - ./secret-db-env.sops.yaml
