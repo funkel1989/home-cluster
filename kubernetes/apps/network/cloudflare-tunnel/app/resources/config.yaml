@@ -1,6 +1,8 @@
 ---
 originRequest:
   originServerName: "external.${SECRET_DOMAIN}"
+  # Disable HTTP/2 to origin to avoid any websocket/upgrade quirks
+  http2Origin: false
 
 ingress:
   # Route ALL hosts (including plex) via the external gateway so
