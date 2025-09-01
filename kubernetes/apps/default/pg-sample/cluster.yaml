@@ -21,6 +21,7 @@ spec:
   backup:
     barmanObjectStore:
       destinationPath: s3://cnpg-backups/pg-sample
+      endpointURL: http://minio.minio.svc.cluster.local:9000
       s3Credentials:
         accessKeyId:
           name: cnpg-backup
@@ -28,8 +29,4 @@ spec:
         secretAccessKey:
           name: cnpg-backup
           key: AWS_SECRET_ACCESS_KEY
-        endpointURL:
-          name: cnpg-backup
-          key: AWS_ENDPOINT
     retentionPolicy: "7d"
-
