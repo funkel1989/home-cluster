@@ -55,7 +55,7 @@ spec:
                 spec:
                   httpGet:
                     path: /minio/health/live
-                    port: http
+                    port: 9000
                   periodSeconds: 10
                   timeoutSeconds: 2
               readiness:
@@ -64,7 +64,7 @@ spec:
                 spec:
                   httpGet:
                     path: /minio/health/ready
-                    port: http
+                    port: 9000
                   periodSeconds: 10
                   timeoutSeconds: 2
 

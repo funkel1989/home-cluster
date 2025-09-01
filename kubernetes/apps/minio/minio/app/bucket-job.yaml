@@ -14,7 +14,7 @@ spec:
       restartPolicy: OnFailure
       containers:
         - name: mc
-          image: quay.io/minio/mc:latest
+          image: docker.io/minio/mc:latest
           imagePullPolicy: IfNotPresent
           envFrom:
             - secretRef:
@@ -26,4 +26,3 @@ spec:
               mc alias set minio http://minio.minio.svc.cluster.local:9000 "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD"
               mc mb --ignore-existing minio/cnpg-backups
               echo "Bucket 'cnpg-backups' ensured."
-
