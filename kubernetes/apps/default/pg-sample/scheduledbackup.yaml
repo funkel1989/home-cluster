@@ -9,5 +9,5 @@ spec:
   # Take an immediate backup once, then follow the schedule
   immediate: true
   backupOwnerReference: self
-  cluster: pg-sample
-
+  cluster:
+    name: pg-sample
