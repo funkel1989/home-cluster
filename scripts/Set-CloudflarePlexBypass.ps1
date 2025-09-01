@@ -1,6 +1,4 @@
 #requires -Version 7.0
-Set-StrictMode -Version Latest
-$ErrorActionPreference = 'Stop'
 
 <#
 .SYNOPSIS
@@ -56,6 +54,9 @@ param(
     [int] $Priority = 1,
     [switch] $PurgeHostnameCache
 )
+
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
 
 if (-not $ApiToken -and (-not $GlobalApiKey -or -not $Email)) {
     throw "Provide either -ApiToken or both -GlobalApiKey and -Email."
@@ -120,7 +121,7 @@ if ($existingRule) {
     Write-Host "Created Page Rule: $($create.result.id)" -ForegroundColor Green
 }
 
-if ($PurgeHostnameCache) {
+if ($PSBoundParameters.ContainsKey('PurgeHostnameCache') -and $PurgeHostnameCache) {
     Write-Host "Purging cache for hostname '$Hostname'..." -ForegroundColor Cyan
     $purgeBody = @{ hosts = @($Hostname) } | ConvertTo-Json
     $purge = Invoke-CfApi -Method POST -Path "/zones/$zoneId/purge_cache" -BodyJson $purgeBody
