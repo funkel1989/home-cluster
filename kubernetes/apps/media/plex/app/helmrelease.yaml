@@ -67,6 +67,7 @@ spec:
               - --dir-cache-time=1h
               - --poll-interval=1m
               - --allow-other
+              - --allow-non-empty
               - --vfs-cache-mode=full
               - --vfs-read-ahead=64M
               - --buffer-size=32M
