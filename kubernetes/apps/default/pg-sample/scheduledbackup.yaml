@@ -1,0 +1,13 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: pg-sample-daily
+  namespace: default
+spec:
+  schedule: "0 3 * * *"
+  # Take an immediate backup once, then follow the schedule
+  immediate: true
+  backupOwnerReference: self
+  cluster: pg-sample
+

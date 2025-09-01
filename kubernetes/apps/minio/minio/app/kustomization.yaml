@@ -6,3 +6,4 @@ resources:
   - ./helmrelease.yaml
   - ./bucket-job.yaml
   - ./httproute.yaml
+  - ./minio-cnpg-user-job.yaml
