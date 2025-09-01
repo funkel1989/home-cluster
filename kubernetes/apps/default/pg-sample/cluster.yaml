@@ -16,6 +16,14 @@ spec:
       owner: appuser
       secret:
         name: pg-sample-owner
+  managed:
+    roles:
+      - name: appuser
+        login: true
+        superuser: false
+        passwordSecret:
+          name: pg-sample-owner
+          key: password
   monitoring:
     enablePodMonitor: true
   backup:
