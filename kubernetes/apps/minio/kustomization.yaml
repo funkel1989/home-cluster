@@ -5,10 +5,6 @@ kind: Kustomization
 namespace: minio
 components:
   - ../../components/common
-postBuild:
-  substituteFrom:
-    - kind: Secret
-      name: cluster-secrets
 resources:
   - ./secrets
   - ./minio/ks.yaml

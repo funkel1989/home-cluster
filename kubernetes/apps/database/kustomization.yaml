@@ -5,10 +5,6 @@ kind: Kustomization
 namespace: database
 components:
   - ../../components/common
-postBuild:
-  substituteFrom:
-    - kind: Secret
-      name: cluster-secrets
 resources:
   - ./namespace.yaml
   - ./cloudnative-pg/ks.yaml
