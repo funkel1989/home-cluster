@@ -21,6 +21,8 @@ spec:
                 value: https
               - name: X-Forwarded-Port
                 value: "443"
+              - name: X-Forwarded-Host
+                value: plex.${SECRET_DOMAIN}
       backendRefs:
         - name: plex
           port: 32400
@@ -48,6 +50,8 @@ spec:
                 value: https
               - name: X-Forwarded-Port
                 value: "443"
+              - name: X-Forwarded-Host
+                value: plex.${SECRET_DOMAIN}
       backendRefs:
         - name: plex
           port: 32400
