@@ -31,10 +31,10 @@ spec:
           app:
             image:
               repository: plexinc/pms-docker
-              tag: 1.41.4.9463-630c9f557 # example, adjust as desired
+              tag: 1.42.1.10060-4e8b05daf # example, adjust as desired
             env:
               TZ: "UTC"
-              ADVERTISE_IP: "https://plex.${SECRET_DOMAIN}"
+              ADVERTISE_IP: "https://plex.${SECRET_DOMAIN}:443"
             # No auto-claim; claim via Web UI after first start
             resources:
               requests:
