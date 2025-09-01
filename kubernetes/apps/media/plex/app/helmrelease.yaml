@@ -5,7 +5,7 @@ kind: HelmRelease
 metadata:
   name: plex
 spec:
-  suspend: true # flip to false after creating the rclone config secret
+  suspend: false
   interval: 1h
   chartRef:
     kind: OCIRepository
@@ -25,6 +25,8 @@ spec:
         pod:
           annotations:
             reloader.stakater.com/auto: "true"
+        securityContext:
+          supplementalGroups: [44, 107]
         containers:
           app:
             image:
@@ -32,8 +34,9 @@ spec:
               tag: 1.41.4.9463-630c9f557 # example, adjust as desired
             env:
               TZ: "UTC"
-              # Set if you want to auto-claim the server on first run
-              # PLEX_CLAIM: "claim-xxxxxxxxxxxxxxxxxxxx"
+            envFrom:
+              - secretRef:
+                  name: plex-env
             resources:
               requests:
                 cpu: 200m
@@ -118,6 +121,25 @@ spec:
           plex:
             rclone:
               - path: /config/rclone
+                readOnly: true
+
+      # Mount /dev/fuse for rclone and /dev/dri for Plex iGPU transcoding
+      fuse:
+        enabled: true
+        type: hostPath
+        hostPath: /dev/fuse
+        advancedMounts:
+          plex:
+            rclone:
+              - path: /dev/fuse
+      gpu:
+        enabled: true
+        type: hostPath
+        hostPath: /dev/dri
+        advancedMounts:
+          plex:
+            app:
+              - path: /dev/dri
                 readOnly: true
 
     service:
