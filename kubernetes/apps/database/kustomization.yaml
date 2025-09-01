@@ -10,4 +10,5 @@ postBuild:
     - kind: Secret
       name: cluster-secrets
 resources:
+  - ./namespace.yaml
   - ./cloudnative-pg/ks.yaml
