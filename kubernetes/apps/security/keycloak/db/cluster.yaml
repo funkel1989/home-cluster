@@ -16,6 +16,14 @@ spec:
       owner: keycloak
       secret:
         name: keycloak-db-owner
+  managed:
+    roles:
+      - name: keycloak
+        login: true
+        superuser: false
+        passwordSecret:
+          name: keycloak-db-owner
+          key: password
   monitoring:
     enablePodMonitor: true
   backup:
@@ -30,4 +38,3 @@ spec:
           name: cnpg-backup
           key: AWS_SECRET_ACCESS_KEY
     retentionPolicy: "7d"
-
