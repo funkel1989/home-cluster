@@ -31,6 +31,7 @@ spec:
   values:
     production: true
     proxyHeaders: xforwarded
+    hostname: keycloak.${SECRET_DOMAIN}
     postgresql:
       enabled: false
     service:
