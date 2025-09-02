@@ -1,0 +1,56 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrepository-source-v1.json
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: bitnami
+spec:
+  interval: 1h
+  url: https://charts.bitnami.com/bitnami
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: keycloak
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: keycloak
+      version: 22.3.14
+      sourceRef:
+        kind: HelmRepository
+        name: bitnami
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      strategy: rollback
+      retries: 3
+  values:
+    production: true
+    service:
+      type: ClusterIP
+      ports:
+        http: 80
+    ingress:
+      enabled: false
+    auth:
+      existingSecret: keycloak-admin
+      passwordSecretKey: admin-password
+    metrics:
+      enabled: true
+      serviceMonitor:
+        enabled: true
+        namespace: monitoring
+    externalDatabase:
+      host: keycloak-db-rw.security.svc.cluster.local
+      port: 5432
+      user: keycloak
+      database: keycloak
+      existingSecret: keycloak-db
+      existingSecretPasswordKey: password
+
