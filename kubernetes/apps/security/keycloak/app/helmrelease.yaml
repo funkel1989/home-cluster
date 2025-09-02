@@ -48,8 +48,8 @@ spec:
     ingress:
       enabled: false
     auth:
-      adminUser: admin
       existingSecret: keycloak-admin
+      existingSecretUserKey: admin-user
       passwordSecretKey: admin-password
     metrics:
       enabled: true
