@@ -30,6 +30,7 @@ spec:
       retries: 3
   values:
     production: true
+    proxyHeaders: xforwarded
     postgresql:
       enabled: false
     service:
