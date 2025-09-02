@@ -32,6 +32,8 @@ spec:
       retries: 3
   values:
     production: true
+    postgresql:
+      enabled: false
     service:
       type: ClusterIP
       ports:
@@ -53,4 +55,3 @@ spec:
       database: keycloak
       existingSecret: keycloak-db
       existingSecretPasswordKey: password
-
