@@ -23,7 +23,7 @@ spec:
         login: true
         superuser: false
         passwordSecret:
-          name: keycloak-db-owner
+          name: keycloak-db
           key: password
   monitoring:
     enablePodMonitor: true
